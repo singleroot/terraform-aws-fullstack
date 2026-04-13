@@ -9,7 +9,7 @@ on:
   pull_request:
     branches:
       - develop
-
+  workflow_dispatch: {}  # This must be here to create the button
 env:
   TF_DIR: terraform/environments/dev
 
@@ -73,7 +73,7 @@ jobs:
         if: github.event_name == 'push'
         run: terraform output
 
-      # Step 10: Destroy 
+      # Step 10: Destroy
       - name: Terraform Destroy
         # This only runs if you manually triggered the workflow
         if: github.event_name == 'workflow_dispatch'
