@@ -77,5 +77,5 @@ jobs:
       - name: Terraform Destroy
         # This only runs if you manually triggered the workflow
         if: github.event_name == 'workflow_dispatch'
-        run: terraform destroy -auto-approve
+        run: terraform destroy -auto-approve -var="db_password=${{ secrets.DB_PASSWORD }}"
 
