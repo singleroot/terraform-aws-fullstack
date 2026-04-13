@@ -72,3 +72,9 @@ jobs:
       - name: Show Outputs
         if: github.event_name == 'push'
         run: terraform output
+
+      - name: Terraform Destroy
+        # This only runs if you manually triggered the workflow
+        if: github.event_name == 'workflow_dispatch'
+        run: terraform destroy -auto-approve
+
