@@ -1,0 +1,74 @@
+name: 'Terraform Dev'
+
+on:
+  push:
+    branches:
+      - develop                        # triggers on push to develop
+    paths:
+      - 'terraform/**'                 # ONLY if terraform files changed
+  pull_request:
+    branches:
+      - develop
+
+env:
+  TF_DIR: terraform/environments/dev
+
+jobs:
+  terraform:
+    name: 'Terraform Dev'
+    runs-on: ubuntu-latest
+    environment: dev                   # GitHub environment (for approvals)
+
+    defaults:
+      run:
+        working-directory: ${{ env.TF_DIR }}
+
+    steps:
+      # Step 1: Get the code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Step 2: Install Terraform on the runner
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.7.0'
+
+      # Step 3: Configure AWS credentials from GitHub Secrets
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # Step 4: Download providers, set up backend
+      - name: Terraform Init
+        run: terraform init
+
+      # Step 5: Check formatting — fails if you forgot to run 'terraform fmt'
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      # Step 6: Validate syntax
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Step 7: Show what WOULD change (runs on every PR — safe, no changes made)
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+            -out=tfplan \
+            -no-color \
+            -input=false \
+            -var="db_password=${{ secrets.DB_PASSWORD }}"
+
+      # Step 8: Apply changes (ONLY on push to develop, not on PRs)
+      - name: Terraform Apply
+        if: github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false tfplan
+
+      # Step 9: Show the outputs (URLs, IPs, etc)
+      - name: Show Outputs
+        if: github.event_name == 'push'
+        run: terraform output

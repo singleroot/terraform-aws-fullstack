@@ -1,0 +1,49 @@
+name: 'Terraform Staging'
+
+on:
+  push:
+    branches:
+      - main                           # triggers when PR is merged to main
+    paths:
+      - 'terraform/**'
+
+env:
+  TF_DIR: terraform/environments/staging
+
+jobs:
+  terraform:
+    name: 'Terraform Staging'
+    runs-on: ubuntu-latest
+    environment: staging               # GitHub will ask for approval here
+
+    defaults:
+      run:
+        working-directory: ${{ env.TF_DIR }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.7.0'
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - run: terraform init
+        working-directory: ${{ env.TF_DIR }}
+      - run: terraform fmt -check -recursive
+        working-directory: ${{ env.TF_DIR }}
+      - run: terraform validate
+        working-directory: ${{ env.TF_DIR }}
+      - name: Terraform Plan
+        working-directory: ${{ env.TF_DIR }}
+        run: |
+          terraform plan \
+            -out=tfplan \
+            -no-color \
+            -input=false \
+            -var="db_password=${{ secrets.DB_PASSWORD }}"
+      - name: Terraform Apply
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform apply -auto-approve -input=false tfplan

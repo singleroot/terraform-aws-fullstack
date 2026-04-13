@@ -1,0 +1,22 @@
+# Terraform generated files — never commit these
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfplan
+crash.log
+
+# Variable files that might contain secrets
+*.auto.tfvars
+secrets.tfvars
+
+# BUT commit these!
+# .terraform.lock.hcl  ← do NOT gitignore this
+# terraform.tfvars     ← ok to commit if no secrets
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
