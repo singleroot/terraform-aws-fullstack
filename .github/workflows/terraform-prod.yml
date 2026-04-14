@@ -85,7 +85,6 @@ jobs:
       - run: terraform init
 
       # To destroy infra
-
       - name: 'Terraform Destroy'
         run: |
           terraform destroy -auto-approve -input=false \

@@ -10,7 +10,7 @@ resource "aws_db_subnet_group" "main" {
 resource "aws_db_instance" "main" {
   identifier        = "${var.environment}-postgres"
   engine            = "postgres"
-  engine_version    = "15.4"
+  engine_version    = "15.6"
   instance_class    = var.instance_class    # db.t3.micro = free tier
   allocated_storage = var.allocated_storage # 20GB = free tier
 
