@@ -6,6 +6,7 @@ on:
       - main                           # triggers when PR is merged to main
     paths:
       - 'terraform/**'
+  workflow_dispatch: {}  # This must be here to create the button
 
 env:
   TF_DIR: terraform/environments/staging
@@ -47,3 +48,8 @@ jobs:
       - name: Terraform Apply
         working-directory: ${{ env.TF_DIR }}
         run: terraform apply -auto-approve -input=false tfplan
+      # Step 10: Destroy
+      - name: Terraform Destroy
+        # This only runs if you manually triggered the workflow
+        if: github.event_name == 'workflow_dispatch'
+        run: terraform destroy -auto-approve -var="db_password=${{ secrets.DB_PASSWORD }}"
