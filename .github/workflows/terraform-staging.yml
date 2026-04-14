@@ -49,7 +49,7 @@ jobs:
         working-directory: ${{ env.TF_DIR }}
         run: terraform apply -auto-approve -input=false tfplan
       # Step : Destroy
-      - name: Terraform Destroy
+      - name: 'Terraform Destroy'
         # This only runs if you manually triggered the workflow
         if: github.event_name == 'workflow_dispatch'
         run: terraform destroy -auto-approve -var="db_password=${{ secrets.DB_PASSWORD }}"

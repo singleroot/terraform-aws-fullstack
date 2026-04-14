@@ -22,7 +22,7 @@ resource "aws_db_instance" "main" {
   vpc_security_group_ids = [var.security_group_id]
 
   # Free tier settings
-  backup_retention_period = 7             # keep backups for 7 days
+  backup_retention_period = 1             # keep backups for 7 days
   skip_final_snapshot     = true          # for dev/staging — set false for prod!
   multi_az                = false         # multi-az costs money
   publicly_accessible     = false         # NEVER expose DB to internet
