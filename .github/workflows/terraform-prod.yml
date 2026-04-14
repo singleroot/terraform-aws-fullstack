@@ -85,8 +85,8 @@ jobs:
       - run: terraform init
 
       # To destroy infra
-      
-      - name: Terraform Destroy
+
+      - name: 'Terraform Destroy'
         run: |
           terraform destroy -auto-approve -input=false \
           -var="db_password=${{ secrets.DB_PASSWORD }}" \
