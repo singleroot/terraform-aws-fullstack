@@ -83,7 +83,7 @@ jobs:
 
       - run: terraform init
 
-      # Added -lock-timeout to prevent the S3 412 error if a plan was recently run
+      # To destroy infra
       - name: Terraform Destroy
         run: |
           terraform destroy -auto-approve -input=false \
