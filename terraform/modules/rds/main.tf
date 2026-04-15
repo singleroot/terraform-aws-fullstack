@@ -10,7 +10,7 @@ resource "aws_db_subnet_group" "main" {
 resource "aws_db_instance" "main" {
   identifier        = "${var.environment}-postgres"
   engine            = "postgres"
-  engine_version    = "15.4"
+  engine_version    = "13.22"
   instance_class    = var.instance_class    # db.t3.micro = free tier
   allocated_storage = var.allocated_storage # 20GB = free tier
 
@@ -22,7 +22,7 @@ resource "aws_db_instance" "main" {
   vpc_security_group_ids = [var.security_group_id]
 
   # Free tier settings
-  backup_retention_period = 7             # keep backups for 7 days
+  backup_retention_period = 1             # keep backups for 7 days
   skip_final_snapshot     = true          # for dev/staging — set false for prod!
   multi_az                = false         # multi-az costs money
   publicly_accessible     = false         # NEVER expose DB to internet

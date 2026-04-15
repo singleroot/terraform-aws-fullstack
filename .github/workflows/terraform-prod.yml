@@ -65,6 +65,7 @@ jobs:
   destroy:
     name: 'Destroy Production'
     # Only run if manually triggered via the "Run workflow" button
+    needs: apply                        # waits for plan job to finish
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment: prod-destroy          # HIGHLY RECOMMENDED: Create a specific environment with "Required Reviewers"
@@ -83,8 +84,8 @@ jobs:
 
       - run: terraform init
 
-      # Added -lock-timeout to prevent the S3 412 error if a plan was recently run
-      - name: Terraform Destroy
+      # To destroy infra
+      - name: 'Terraform Destroy'
         run: |
           terraform destroy -auto-approve -input=false \
           -var="db_password=${{ secrets.DB_PASSWORD }}" \
